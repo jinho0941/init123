@@ -6,6 +6,7 @@ import { Member } from '@/type'
 import { getCards } from '@/app/api/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { ColumnCard } from './column-card'
 
 type Props = {
   dashboardId: number
@@ -43,27 +44,17 @@ export const Column = async ({
         columnId={columnId}
       />
       {cardRes.cards.map((card) => (
-        <div
+        <ColumnCard
           key={card.id}
-          className='cursor-pointer space-y-4 rounded-lg border bg-white p-6 transition hover:bg-slate-50'
-        >
-          <h2 className='truncate text-xl font-semibold'>{card.title}</h2>
-          {card.tags.map((tag) => (
-            <Badge key={tag} variant={'outline'} className='truncate'>
-              {tag}
-            </Badge>
-          ))}
-          <div className='flex justify-between'>
-            <div className='flex items-center gap-x-2 text-sm'>
-              <Calendar className='h-5 w-5 text-gray-500' />
-              <span>{formatDate(card.dueDate)}</span>
-            </div>
-            <Avatar>
-              <AvatarImage src={card.assignee.profileImageUrl} />
-              <AvatarFallback>{card.assignee.nickname[0]}</AvatarFallback>
-            </Avatar>
-          </div>
-        </div>
+          cardId={card.id}
+          columnId={columnId}
+          dashboardId={dashboardId}
+          title={card.title}
+          tags={card.tags}
+          dueDate={card.dueDate}
+          profileImageUrl={card.assignee.profileImageUrl}
+          firstName={card.assignee.nickname[0]}
+        />
       ))}
     </div>
   )

@@ -41,7 +41,7 @@ export const Profile = ({ name, email, ImgUrl: initialImgUrl }: Props) => {
   const [isPending, startTransition] = useTransition()
   const [file, setFile] = useState<File | undefined>()
   const [imgUrl, setImgUrl] = useState<string | undefined>(initialImgUrl)
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const router = useRouter()
 
@@ -55,18 +55,18 @@ export const Profile = ({ name, email, ImgUrl: initialImgUrl }: Props) => {
 
   const onCancel = () => {
     form.reset()
+    fileInputRef.current && (fileInputRef.current.value = '')
+    setImgUrl(initialImgUrl)
+    setFile(undefined)
   }
 
   const onSubmit = async (data: ProfileSchema) => {
-    const { username } = data
     const formData = new FormData()
-    if (file) {
-      formData.append('image', file)
-    }
+    if (file) formData.append('image', file)
 
     startTransition(async () => {
       const isUpdate = await updateUser({
-        nickname: username,
+        nickname: data.username,
         formData: file ? formData : undefined,
       })
       if (!isUpdate) {
@@ -79,11 +79,10 @@ export const Profile = ({ name, email, ImgUrl: initialImgUrl }: Props) => {
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const imgUrl = URL.createObjectURL(file)
-      setImgUrl(imgUrl)
-      setFile(file)
+    const selectedFile = e.target.files?.[0]
+    if (selectedFile) {
+      setImgUrl(URL.createObjectURL(selectedFile))
+      setFile(selectedFile)
     }
   }
 
@@ -97,7 +96,7 @@ export const Profile = ({ name, email, ImgUrl: initialImgUrl }: Props) => {
               {imgUrl ? (
                 <Image
                   src={imgUrl}
-                  alt={'userImg'}
+                  alt='userImg'
                   fill
                   sizes='100vw 50vw'
                   className='cursor-pointer object-cover transition-all hover:brightness-75'
@@ -112,13 +111,6 @@ export const Profile = ({ name, email, ImgUrl: initialImgUrl }: Props) => {
                   <Plus className='h-8 w-8 text-black' />
                 </Button>
               )}
-              <Input
-                ref={fileInputRef}
-                type='file'
-                accept='image/*'
-                onChange={handleFileChange}
-                className='hidden'
-              />
             </div>
             <div className='flex flex-1 flex-col justify-between'>
               <FormField
@@ -157,7 +149,7 @@ export const Profile = ({ name, email, ImgUrl: initialImgUrl }: Props) => {
             <Button
               onClick={onCancel}
               className='px-8'
-              variant={'destructive'}
+              variant='destructive'
               type='button'
             >
               취소

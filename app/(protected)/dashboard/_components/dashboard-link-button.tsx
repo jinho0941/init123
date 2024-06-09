@@ -1,3 +1,5 @@
+'use client'
+
 import { CircleColorLabel } from '@/components/circle-color-label'
 import { Button } from '@/components/ui/button'
 import { ValueOfCircleColor } from '@/enum'

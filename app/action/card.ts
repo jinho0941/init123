@@ -43,3 +43,12 @@ export const createCard = async ({
     return null
   }
 }
+
+export const deleteCard = async ({ cardId }: { cardId: number }) => {
+  try {
+    await api.delete(`/cards/${cardId}`)
+    revalidatePath('dashboard/[dashbaordId]', 'page')
+  } catch (error) {
+    return null
+  }
+}
